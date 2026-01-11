@@ -1,0 +1,25 @@
+* {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 20px;
+    text-align: center;
+
+}
+
+table,
+thead,
+tbody,
+th,
+td,
+th {
+    border: 1px solid #000000;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 300px;
+}
+
+caption {
+    border: 1px solid #000000;
+    font-size: 24px;
+    color: red;
+    border-bottom: none;
+}
