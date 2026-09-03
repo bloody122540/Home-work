@@ -1,0 +1,60 @@
+.page {
+    font-family: var(--font-family);
+    font-weight: 400;
+
+}
+
+.page__body {
+    min-width: 375px;
+    color: var(--white-color);
+    background-color: var(--bg-color);
+}
+
+.container {
+    width: min(var(--container-width), 100% - var(--container-padding) * 2);
+    margin-inline: auto;
+}
+
+.header__logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.logo__name {
+    font-family: Latin CT;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 119%;
+    letter-spacing: 0.03em;
+    color: var(--white-color);
+    padding: 27px 0 11px;
+}
+
+.header__logo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.button {
+    font-size: 18px;
+    color: var(--white-color);
+    gap: 20px;
+    cursor: pointer;
+}
+
+.button__form,
+.button__score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 1px solid #cf6807;
+    outline-offset: 3px;
+}

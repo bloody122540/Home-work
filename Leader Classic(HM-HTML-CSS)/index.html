@@ -1,0 +1,66 @@
+<!doctype html>
+<html class="page" lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./CSS/index.css" />
+    <link rel="shortcut icon" href="./icons/favicon-icon.svg" type="image/x-icon" />
+    <title>Leader Classic</title>
+</head>
+
+<body class="page__body">
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__logo-wrapper">
+                <button class="header__burger burger">
+                    <svg class="burger__menu">
+                        <use class="burger__menu" href="./icons/burger-menu#burger.svg" width="16" height="16"
+                            alt="Бургер меню" aria-label="Открыть меню"></use>
+                        <use class="burger__menu" href="./icons/burger-menu#cross.svg" width="16" height="16"
+                            alt="Бургер меню" aria-label="Закрыть меню"></use>
+                    </svg>
+                </button>
+                <a href="#" class="logo header__logo">
+                    <img class="logo__img" src="./icons/logo.svg" width="52" height="66" alt="Логотип LEADER CLASSIC"
+                        aria-label="логотип">
+                    <p class="logo__name" aria-label="логотип">LEADER<br>CLASSIC</p>
+                </a>
+            </div>
+
+            <!-- _______выпадающий список языков_______________ -->
+            <div class="header__select-wrapper">
+                <div class="header__select">
+                    <span class="select__flag" aria-hidden="true"></span>
+                    <select class="select__input" name="country-selector" id="country-selector">
+                        <option value="RU">RU</option>
+                        <option value="EN">EN</option>
+                        <option value="FR">FR</option>
+                    </select>
+                    <img class="select__img select__arrow" src="./icons/arrow.svg" width="22" height="22" alt="">
+                </div>
+            </div>
+            <!-- __________________________ -->
+            <nav class="menu header__menu" aria-label="Главное меню">
+                <ul class="menu__list">
+                    <li class="menu__item">
+                        <a class="menu__link" href="#pricing-plans"><span class="menu__link-text">Тарифы</span></a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="#Bonus"><span class="menu__link-text">Бонус</span></a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="#Referral"><span class="menu__link-text">Реферальная</span></a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="#Contacts"><span class="menu__link-text">Контакты</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="header__button">
+                <a class="button__form button" aria-label="Войти">Войти</a>
+                <a class="button__score button" aria-label="Открыть счёт">Открыть счёт</a>
+            </div>
+        </div>
+    </header>
+</body>
