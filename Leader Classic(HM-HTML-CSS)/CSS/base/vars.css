@@ -1,0 +1,50 @@
+:root {
+    /* font-family */
+    --font-family: "Gotham Pro", sans-serif;
+    --second-family: "Montserrat", sans-serif;
+    --third-family: "Latin CT Wide", sans-serif;
+    --font3: "Roboto", sans-serif;
+    --font4: "Bahnschrift", sans-serif;
+
+    /* colors */
+    --white-color: #fff;
+    --bg-color: #0E0E12;
+    --box-shadow: linear-gradient(180deg, #98c269 0%, #9edfb6 100%);
+    --menu-gradient: linear-gradient(36deg, #E7AA19 0%, #CB6D9C 100%);
+    --linear-orange: linear-gradient(57deg, #dc6b30 0%, #e4864f 42.19%, #ffbe82 72.92%, #e49031 100%);
+    --liner-green: linear-gradient(180deg, #3d4f3b 0%, rgba(61, 79, 59, 0) 100%);
+    --linear-gb: linear-gradient(#FF8924 0%, #FFB017 100%);
+    --gift-bg: linear-gradient(90.19deg, rgba(255, 255, 255, 0.06) 0.73%);
+    --icon-color: #62BA7F;
+    --green-color: #4BD879;
+
+    /* container */
+    --container-width: 1570px;
+    --container-padding: 15px;
+
+    /* transition */
+    --transition-time: 0.2s;
+
+    /* border */
+    --border-bh: 20px;
+
+
+
+    /* --default variation only  */
+    --select-icon-size: 16px;
+    --select-icon-margin: 1rem;
+    /* icon right/left position */
+    --select-text-icon-gap: 0.5rem;
+    /* gap between text and icon */
+}
+
+@media (width <= 1260px) {
+    :root {
+        --border-bh: 15px;
+    }
+}
+@media (width <= 992px) {
+    :root {
+        --border-bh: 10px;
+    }
+}

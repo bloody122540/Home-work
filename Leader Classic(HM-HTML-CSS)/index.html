@@ -1,0 +1,120 @@
+<!doctype html>
+<html class="page" lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./CSS/index.css" />
+    <link rel="shortcut icon" href="./icons/favicon-icon.svg" type="image/x-icon" />
+    <script defer src="./JS/index.js" type="module"></script>
+    <script defer src="./JS/time.js" type="module"></script>
+    <title>Leader Classic</title>
+</head>
+
+<body class="page__body">
+    <header class="header">
+        <div class="container header__container">
+            <div class="header__logo-wrapper">
+                <button class="header__burger burger" aria-label="Открыть меню" aria-expanded="false"
+                    aria-controls="header__menu">
+                    <svg class="burger__menu">
+                        <use class="burger__menu-burger" href="./icons/burger-menu.svg#burger" width="16" height="16"
+                            alt="Бургер меню"></use>
+                        <use class="burger__menu-cross" href="./icons/burger-menu.svg#cross" width="16" height="16"
+                            alt="Крестик" aria-label="Закрыть меню"></use>
+                    </svg>
+                </button>
+                <a href="#" class="logo header__logo" aria-label="Открыть меню" aria-expanded="false">
+                    <img class="logo__img" src="./icons/logo.svg" width="52" height="66" alt="Логотип LEADER CLASSIC"
+                        aria-label="логотип">
+                    <p class="logo__name" aria-label="логотип">LEADER<br>CLASSIC</p>
+                </a>
+            </div>
+            <!-- _______выпадающий список языков_______________ -->
+            <div class="header__select-wrapper">
+                <div class="header__select">
+                    <span class="select__flag" aria-hidden="true"></span>
+                    <select class="select__input" name="country-selector" id="country-selector">
+                        <option value="RU">RU</option>
+                        <option value="EN">EN</option>
+                        <option value="FR">FR</option>
+                    </select>
+                    <img class="select__img select__arrow" src="./icons/arrow.svg" width="22" height="22" alt="">
+                </div>
+            </div>
+            <!-- __________________________ -->
+            <nav class="menu header__menu" id="header__menu" aria-label="Главное меню">
+                <ul class="menu__list">
+                    <li class="menu__item">
+                        <a class="menu__link" href="#pricing-plans"><span class="menu__link-text">Тарифы</span></a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="#Bonus"><span class="menu__link-text">Бонус</span></a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="#Referral"><span class="menu__link-text">Реферальная</span></a>
+                    </li>
+                    <li class="menu__item">
+                        <a class="menu__link" href="#Contacts"><span class="menu__link-text">Контакты</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="header__button">
+                <a class="button__form button" aria-label="Войти">Войти</a>
+                <a class="button__score button" aria-label="Открыть счёт">Открыть счёт</a>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <div class="container section__container">
+            <section class="section__time">
+                <img class="section__gift" src="./images/gift.png" width="50" height="50" alt="Подарок"
+                    aria-label="Gift">
+                <div class="section__text">
+                    <p class="section__title">Станьте миллионером с Leader Classic</p>
+                    <p class="text__little">Откройте счет, инвестируйте в фонды Leader Classic и получите шанс выиграть
+                        один из 100 000 000 ₽</p>
+                </div>
+                <div class="section__timer" id="section__timer">
+                    <span class="days" id="days">00</span> : <span class="timer__letter">д</span>
+                    <span id="hours">00</span> : <span class="timer__letter">ч</span>
+                    <span id="minutes">00</span> : <span class="timer__letter">м</span>
+                    <span id="seconds">00</span><span class="timer__letter"> с</span>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+            <section class="hero__container">
+                <img class="hero__img" src="./images/Hand-iPhone-12-Pro.png" width="872" height="1149"
+                    alt="Рука с Iphone">
+                <h1 class="hero__title">ТОП-5 акций<br>с доходностью до 10-30%<br>уже в 2022 году </h1>
+                <ul class="hero__items">
+                    <img class="hero__arrow" src="./icons/Arrow-button.svg" width="42" height="156" alt="Стрелка"
+                        aria-label="arrow">
+                    <li class="hero__list">Открытие брокерского счета за 5 минут без визита в офис</li>
+                    <li class="hero__list">Доступ к ценным бумагам с любого устройства</li>
+                    <li class="hero__list">Поддержка в чате 24/7</li>
+                </ul>
+                <div class="hero__button">
+                    <a class="hero__download button" href="#"><span class="hero__download-text">Скачать ТОП-5
+                            акций</span>
+                        <img class="download__file" src="./images/file.png" width="123" height="118" alt="Файл"
+                            aria-label="file">
+                    </a>
+                    <a class="hero__score" href="#">Открыть счёт</a>
+                </div>
+                <div class="hero__investors">
+                    <img class="hero__image-one" src="./images/investor-png/investor1.png" width="70" height="70"
+                        alt="Инвестор девушка" aria-label="investor">
+                    <img class="hero__image-two" src="./images/investor-png/investor2.png" width="70" height="70"
+                        alt="Инвестор мужчина" aria-label="investor">
+                    <img class="hero__image-tree" src="./images/investor-png/investor3.png" width="70" height="70"
+                        alt="Инвестор мужчина" aria-label="investor">
+                    <p class="hero__text">Сейчас инвестируют<br>100 000+ пользователей</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+
+</body>
