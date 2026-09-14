@@ -1,0 +1,14 @@
+/* BASE */
+@import "./base/normalize.css";
+@import "./base/fonts.css";
+@import "./base/vars.css";
+@import "./base/global.css";
+@import "./Blocks/header.css";
+@import "./Blocks/burger.css";
+@import "./Blocks/timeblock.css";
+@import "./Blocks/hero.css";
+@import "./Blocks/catalog.css";
+@import "./Blocks/instruments.css";
+@import "./Blocks/investment.css";
+@import "./Blocks/bonus.css";
+@import "./Blocks/customers.css";
