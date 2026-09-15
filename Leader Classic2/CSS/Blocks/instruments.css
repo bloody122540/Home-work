@@ -1,0 +1,57 @@
+.instruments__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: clamp(20px, 0.34rem + 3.88vw, 80px);
+}
+
+.instruments__title {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: clamp(20px, 0.34rem + 3.88vw, 80px);
+}
+
+.instrument__carts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+    gap: clamp(20px, -0.115rem + 5.83vw, 110px);
+}
+
+.instrument__carts article {
+    max-width: 370px;
+}
+
+.instrument__images {
+    margin-bottom: clamp(5px, 0.237rem + 0.32vw, 10px);
+}
+
+.instrument__carts-img img {
+    width: clamp(70px, 3.313rem + 4.53vw, 140px);
+    height: auto;
+}
+
+.instrument__carts-title {
+    font-weight: 400;
+    font-size: clamp(12px, 0.477rem + 1.17vw, 30px);
+    line-height: 130%;
+    color: var(--white-color);
+    margin-bottom: clamp(5px, 0.237rem + 0.32vw, 10px);
+}
+
+.instrument__carts-text {
+    font-weight: 400;
+    font-size: clamp(10px, 0.473rem + 0.65vw, 20px);
+    line-height: 130%;
+    color: var(--white-color);
+}
+
+.instrument__icon {
+    position: absolute;
+    top: 50%;
+    right: 0;
+}
