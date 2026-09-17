@@ -1,0 +1,131 @@
+.faq__inner {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: auto;
+    place-self: center;
+    text-align: start;
+    gap: 30px;
+    margin-bottom: 200px;
+}
+
+@media (width<=1260px) {
+    .faq__inner {
+        grid-template-columns: 1fr;
+    }
+}
+
+.faq__questions {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+@media (width <=1260px) {
+    .faq__questions {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+.questions__title {
+    line-height: 117%;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.questions__text {
+    font-weight: 400;
+    font-size: clamp(14px, 0.754rem + 0.52vw, 22px);
+    line-height: 159%;
+    color: var(--white-color);
+}
+
+@media (width <=1260px) {
+    .questions__text {
+        margin-bottom: clamp(20px, 0.72rem + 2.26vw, 40px);
+    }
+}
+
+.questions__button {
+    margin-top: auto;
+    text-align: center;
+    justify-content: end;
+}
+
+.faq__title {
+    display: flex;
+    font-weight: 400;
+    font-size: clamp(16px, 0.364rem + 2.71vw, 40px);
+    line-height: 117%;
+    color: var(--white-color);
+    text-align: start;
+}
+
+.summary__icon {
+    display: flex;
+    font-size: clamp(16px, 0.364rem + 2.71vw, 40px);
+    justify-content: center;
+    align-items: center;
+    background: #24242d;
+    width: clamp(24px, 1.136rem + 1.55vw, 48px);
+    height: clamp(24px, 1.136rem + 1.55vw, 48px);
+    border-radius: 50%;
+    pointer-events: none;
+    user-select: none;
+}
+
+details summary::after {
+    transition: background var(--transition-time);
+}
+
+details[open] summary::after,
+details:hover summary::after {
+    content: "";
+    display: inline-flex;
+    width: clamp(24px, 1.136rem + 1.55vw, 48px);
+    height: clamp(24px, 1.136rem + 1.55vw, 48px);
+    background: url("../../icons/arrow-open.svg") no-repeat center / cover;
+}
+
+details[open] summary::after {
+    transform: rotate(180deg);
+}
+
+details {
+    cursor: pointer;
+}
+
+
+details:hover .summary__icon {
+    background-image: linear-gradient(149.53deg, #6ba758 21.14%, #23503d 81.17%);
+    pointer-events: none;
+}
+
+details[open] .summary__icon {
+    background: linear-gradient(149.53deg, #6ba758 21.14%, #23503d 81.17%);
+    pointer-events: none;
+}
+
+summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: clamp(15px, 0.558rem + 1.62vw, 40px) 0;
+    gap: 10px;
+    list-style: none;
+    user-select: none;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::after {
+    content: "";
+    display: inline-flex;
+    width: clamp(24px, 1.136rem + 1.55vw, 48px);
+    height: clamp(24px, 1.136rem + 1.55vw, 48px);
+    background: url("../../icons/arrow-down.svg") no-repeat center / cover;
+}
