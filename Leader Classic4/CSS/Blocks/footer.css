@@ -68,7 +68,7 @@
     }
 }
 
-.footer__social-img svg:hover {
+.footer__social-img a:hover {
     color: #4f815c;
 }
 
