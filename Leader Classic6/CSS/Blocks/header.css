@@ -263,14 +263,20 @@
 .menu__link::after {
     content: "";
     background: url("../../icons/star-icon.svg");
-    width: 21px;
-    height: 21px;
+    width: clamp(12px, 0.613rem + 0.58vw, 21px);
+    height: clamp(12px, 0.613rem + 0.58vw, 21px);
     position: absolute;
     right: -25px;
     top: 50%;
     transform: translateY(-50%);
     opacity: 0;
     transition: opacity 0.2s ease;
+}
+
+@media (width <=1450px) {
+    .menu__link::after {
+        right: -20px;
+    }
 }
 
 .menu__link-text {
