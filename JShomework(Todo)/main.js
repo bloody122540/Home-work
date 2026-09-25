@@ -36,7 +36,7 @@ const completeTodoById = (todos, todoId) => {
 
 
 const deleteTodoById = (todos, todoId) => {
-    todos.findIndex ((todo) => todo[todoKeys.id] === todoId);
+    const todoIndex = todos.findIndex ((todo) => todo[todoKeys.id] === todoId);
     if (todoIndex === -1) {
         console.error(errTodoNotFound(todoId));
         return todos;
