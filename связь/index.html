@@ -1,3 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<title>Audio Rooms</title>
+
+<!-- ===== PeerJS: jsDelivr (стабильнее в РФ) + локальный фолбэк ===== -->
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+<style>
+:root{
+  --bg:#f4f6fb; --card:#fff; --text:#0f172a; --muted:#64748b;
+  --border:#e2e8f0; --input:#f8fafc;
+  --primary:#4f46e5; --primary-h:#4338ca;
+  --danger:#ef4444; --danger-h:#dc2626;
+  --success:#10b981; --warning:#f59e0b;
+  --shadow:0 8px 30px rgba(15,23,42,.08);
+  --sa-t:env(safe-area-inset-top,0px);
+  --sa-b:env(safe-area-inset-bottom,0px);
+  --sa-l:env(safe-area-inset-left,0px);
+  --sa-r:env(safe-area-inset-right,0px);
+}
+[data-theme="dark"]{
+  --bg:#0a0f1e; --card:#131a2b; --text:#e8eefc; --muted:#8896b0;
+  --border:#243049; --input:#1a2236;
+  --primary:#7c74f5; --primary-h:#8f88ff;
+  --danger:#f87171; --danger-h:#ef4444;
+  --success:#34d399; --warning:#fbbf24;
+  --shadow:0 8px 30px rgba(0,0,0,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{height:100%;-webkit-text-size-adjust:100%}
+body{
+  min-height:100vh; min-height:100dvh;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg); color:var(--text);
+  transition:background .3s,color .3s;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
+  overflow-x:hidden;
+}
+.wrap{
+  min-height:100vh; min-height:100dvh;
+  display:flex;
+  padding:calc(20px + var(--sa-t)) calc(16px + var(--sa-r)) calc(20px + var(--sa-b)) calc(16px + var(--sa-l));
+}
+.screen{
+  width:100%; max-width:440px; margin:auto;
+  animation:up .35s cubic-bezier(.2,.9,.3,1.1);
+}
+.screen.hidden{display:none}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+.card{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:20px; padding:28px 24px;
+  box-shadow:var(--shadow);
+  transition:background .3s,border-color .3s;
+}
+.card h1{font-size:22px;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
+.card .sub{font-size:13px;color:var(--muted);margin-bottom:22px}
+
+.field{margin-bottom:12px}
+label{display:block;font-size:11px;font-weight:600;color:var(--muted);
+  margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+input,select{
+  width:100%;padding:11px 13px;
+  font-size:16px;
+  border:1.5px solid var(--border);border-radius:11px;
+  background:var(--input);color:var(--text);
+  outline:none;font-family:inherit;
+  transition:border-color .15s,box-shadow .15s;
+  -webkit-appearance:none;appearance:none;
+  min-height:44px;
+}
+select{
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),
+                   linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+  padding-right:36px;
+}
+input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+input::placeholder{color:var(--muted);opacity:.7}
+select:disabled{opacity:.55;cursor:not-allowed}
+
+.btn{
+  width:100%;padding:12px 18px;font-size:14px;font-weight:600;
+  border:none;border-radius:11px;cursor:pointer;font-family:inherit;
+  transition:all .18s;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;
+  touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;
+}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(79,70,229,.3)}
+.btn-primary:hover:not(:disabled){background:var(--primary-h);transform:translateY(-1px)}
+.btn-secondary{background:var(--input);color:var(--text);border:1.5px solid var(--border)}
+.btn-secondary:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover:not(:disabled){background:var(--danger-h)}
+
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);
+  font-size:11px;margin:16px 0;text-transform:uppercase;letter-spacing:1.5px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.row{display:flex;gap:8px}
+.row input{flex:1;min-width:0}
+.row .btn{width:auto;padding:11px 18px;flex-shrink:0}
+
+details.settings{
+  background:var(--input);border:1.5px solid var(--border);
+  border-radius:11px;padding:11px 13px;margin-bottom:12px;
+}
+details.settings summary{cursor:pointer;font-size:12px;font-weight:600;
+  color:var(--muted);list-style:none;user-select:none;
+  display:flex;align-items:center;gap:6px;min-height:24px}
+details.settings summary::-webkit-details-marker{display:none}
+details.settings summary::before{content:'⚙';transition:transform .2s}
+details.settings[open] summary::before{transform:rotate(90deg)}
+details.settings > div{margin-top:10px}
+
+.rooms{margin-top:16px}
+.rooms h3{font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.rooms-list{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch}
+.room-item{display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:var(--input);
+  border:1.5px solid var(--border);border-radius:11px;
+  cursor:pointer;transition:all .15s;touch-action:manipulation}
+.room-item:hover{border-color:var(--primary);transform:translateX(2px)}
+.room-ic{width:32px;height:32px;border-radius:9px;
+  background:var(--primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:13px;flex-shrink:0}
+.room-info{flex:1;min-width:0}
+.room-nm{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.room-meta{font-size:11px;color:var(--muted);font-family:monospace;margin-top:1px}
+.room-del{background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:14px;padding:6px 8px;border-radius:6px;font-family:inherit;flex-shrink:0}
+.room-del:hover{color:var(--danger);background:rgba(239,68,68,.1)}
+.empty{text-align:center;padding:16px;color:var(--muted);font-size:12px;
+  background:var(--input);border-radius:11px;border:1.5px dashed var(--border)}
+
+.error{color:var(--danger);font-size:12px;text-align:center;
+  margin-top:10px;min-height:16px;font-weight:500}
+
+/* ===== Комната ===== */
+.room-hd{display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--border)}
+.room-hd h2{font-size:17px;font-weight:700}
+.room-id{font-size:12px;color:var(--muted);cursor:pointer;
+  font-family:monospace;display:inline-flex;align-items:center;gap:5px;
+  padding:5px 8px;border-radius:6px;transition:all .15s;touch-action:manipulation}
+.room-id:hover{color:var(--primary);background:var(--input)}
+.room-id::before{content:'#';opacity:.5}
+.room-hd .btn{width:auto;padding:8px 14px;font-size:12px;min-height:38px}
+
+.parts{display:flex;flex-direction:column;gap:7px;
+  min-height:80px;max-height:340px;overflow-y:auto;margin-bottom:12px;
+  -webkit-overflow-scrolling:touch}
+.part{display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:var(--input);
+  border:1.5px solid var(--border);border-radius:12px;
+  animation:in .25s ease-out;transition:all .2s}
+@keyframes in{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.part.you{background:rgba(79,70,229,.08);border-color:var(--primary)}
+.part .av{width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:15px;flex-shrink:0;
+  position:relative;text-transform:uppercase}
+.part.host .av::after{content:'👑';position:absolute;top:-7px;right:-7px;font-size:11px}
+.part-info{flex:1;min-width:0}
+.part-nm{font-size:13.5px;font-weight:600;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.part-st{font-size:11px;color:var(--muted);display:flex;align-items:center;
+  gap:5px;margin-top:1px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--success);
+  display:inline-block;box-shadow:0 0 6px currentColor;color:var(--success)}
+.dot.wait{background:var(--warning);color:var(--warning);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.footer{display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px solid var(--border);
+  font-size:12px;color:var(--muted);gap:10px;flex-wrap:wrap}
+.counter{display:flex;align-items:center;gap:6px;font-weight:600}
+
+/* Toast */
+.toast{position:fixed;bottom:calc(22px + var(--sa-b));left:50%;
+  transform:translateX(-50%) translateY(80px);
+  padding:11px 20px;border-radius:11px;
+  background:var(--card);border:1.5px solid var(--border);
+  font-size:13px;font-weight:500;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.9,.3,1.1);
+  z-index:200;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:var(--danger);color:var(--danger)}
+.toast.success{border-color:var(--success);color:var(--success)}
+
+.theme-btn{position:fixed;
+  top:calc(16px + var(--sa-t));right:calc(16px + var(--sa-r));
+  width:44px;height:44px;
+  border-radius:12px;border:1.5px solid var(--border);
+  background:var(--card);color:var(--text);font-size:18px;
+  cursor:pointer;box-shadow:var(--shadow);transition:all .2s;
+  z-index:100;display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation}
+.theme-btn:hover{transform:translateY(-2px)}
+
+.unlock-btn{
+  position:fixed;left:50%;bottom:calc(78px + var(--sa-b));
+  transform:translateX(-50%);
+  display:none;align-items:center;gap:8px;
+  padding:13px 22px;border-radius:999px;border:none;
+  background:var(--primary);color:#fff;font-size:14px;font-weight:600;
+  font-family:inherit;cursor:pointer;z-index:300;
+  box-shadow:0 8px 26px rgba(79,70,229,.45);
+  touch-action:manipulation;animation:up .3s;
+}
+.unlock-btn:active{transform:translateX(-50%) scale(.96)}
+
+.spinner{width:15px;height:15px;border:2.5px solid rgba(255,255,255,.35);
+  border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;
+  display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.invite{background:var(--input);border:1.5px solid var(--border);
+  border-radius:11px;padding:10px 12px;margin-bottom:12px;font-size:11px}
+.invite label{margin-bottom:6px;display:block}
+.invite-row{display:flex;gap:6px;align-items:center}
+.invite-row input{font-size:12px;padding:8px 10px;font-family:monospace;min-height:40px}
+.invite-row button{width:auto;padding:8px 12px;font-size:11px;flex-shrink:0;min-height:40px}
+
+.warn{background:rgba(245,158,11,.12);border:1.5px solid var(--warning);
+  color:var(--warning);border-radius:11px;padding:10px 12px;
+  font-size:12px;line-height:1.45;margin-bottom:12px;font-weight:500}
+
+@media(max-width:480px){
+  .card{padding:22px 18px;border-radius:18px}
+  .card h1{font-size:19px}
+  .room-hd h2{font-size:15px}
+  .parts{max-height:none}
+  .wrap{padding:calc(14px + var(--sa-t)) calc(12px + var(--sa-r)) calc(14px + var(--sa-b)) calc(12px + var(--sa-l))}
+}
+@media(max-height:520px){
+  .parts{max-height:180px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Отладочный баннер: если что-то упадёт — увидишь это, а не белый экран ===== -->
+<div id="__dbg" style="
+  display:none;position:fixed;top:0;left:0;right:0;z-index:99999;
+  background:#111;color:#0f0;font:12px/1.4 ui-monospace,monospace;
+  padding:8px 10px;white-space:pre-wrap;max-height:40vh;overflow:auto;
+  border-bottom:2px solid #f00;"></div>
+<script>
+  (function(){
+    var box = document.getElementById('__dbg');
+    function show(msg){
+      box.style.display = 'block';
+      box.textContent += msg + '\n';
+    }
+    window.addEventListener('error', function(e){
+      show('❌ ' + (e.message||'error') + ' @ ' + (e.filename||'?') + ':' + (e.lineno||'?'));
+    });
+    window.addEventListener('unhandledrejection', function(e){
+      var r = e.reason;
+      show('❌ Promise: ' + (r && (r.message||r.type) ? (r.message||r.type) : r));
+    });
+    // Проверим, что PeerJS загрузился
+    window.addEventListener('load', function(){
+      if (typeof Peer === 'undefined'){
+        show('❌ PeerJS не загрузился с jsDelivr. Проверьте интернет или положите peerjs.min.js рядом с index.html.');
+      } else {
+        // если всё ок — через 1 сек спрячем баннер
+        setTimeout(function(){ if(box.textContent.trim()==='') box.style.display='none'; }, 1000);
+      }
+    });
+  })();
+</script>
+
+<button class="theme-btn" id="themeBtn" title="Тема">🌙</button>
+
+<div class="wrap">
+  <!-- Лобби -->
+  <section class="screen" id="lobby">
+    <div class="card">
+      <h1>🎙 Audio Rooms</h1>
+      <p class="sub">До 5 участников · P2P · Без сервера</p>
+
+      <div class="warn" id="secureWarn" style="display:none">
+        ⚠️ Для доступа к микрофону нужен <b>HTTPS</b> (или localhost).
+        Откройте страницу по защищённому адресу.
+      </div>
+
+      <div class="field">
+        <label for="name">Ваше имя</label>
+        <input id="name" type="text" placeholder="Введите имя" maxlength="20"
+               autocomplete="off" autocapitalize="words" enterkeyhint="next" spellcheck="false">
+      </div>
+
+      <details class="settings">
+        <summary>Настройки аудио</summary>
+        <div>
+          <div class="field">
+            <label for="mic">Микрофон</label>
+            <select id="mic"></select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="spk">Динамик</label>
+            <select id="spk"></select>
+          </div>
+        </div>
+      </details>
+
+      <button class="btn btn-primary" id="createBtn">➕ Создать комнату</button>
+
+      <div class="divider">или</div>
+
+      <div class="field">
+        <label for="roomId">ID комнаты</label>
+        <div class="row">
+          <input id="roomId" type="text" placeholder="например abc-123" maxlength="40"
+                 autocomplete="off" autocapitalize="off" autocorrect="off"
+                 spellcheck="false" enterkeyhint="go" inputmode="latin">
+          <button class="btn btn-secondary" id="joinBtn">Войти</button>
+        </div>
+      </div>
+
+      <div class="rooms" id="roomsSection" style="display:none">
+        <h3>Недавние комнаты</h3>
+        <div class="rooms-list" id="roomsList"></div>
+      </div>
+
+      <div class="error" id="error"></div>
+    </div>
+  </section>
+
+  <!-- Комната -->
+  <section class="screen hidden" id="room">
+    <div class="card">
+      <div class="room-hd">
+        <div>
+          <h2>Комната</h2>
+          <div class="room-id" id="roomIdShow" title="Нажмите, чтобы скопировать">
+            <span id="roomIdTxt">—</span>
+          </div>
+        </div>
+        <button class="btn btn-danger" id="leaveBtn">Выйти</button>
+      </div>
+
+      <div class="invite">
+        <label>Ссылка для приглашения</label>
+        <div class="invite-row">
+          <input id="inviteLink" type="text" readonly>
+          <button class="btn btn-secondary" id="copyLinkBtn">Копировать</button>
+        </div>
+      </div>
+
+      <div class="parts" id="parts"></div>
+
+      <div class="footer">
+        <div class="counter">
+          👥 <span id="count">0 / 5</span>
+        </div>
+        <div class="counter" id="statusWrap">
+          <span class="dot wait"></span>
+          <span id="statusTxt">Подключение...</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button class="unlock-btn" id="unlockBtn">🔊 Включить звук</button>
+<div class="toast" id="toast"></div>
+<div id="audio" style="display:none"></div>
+
 <script>
 (function(){
   'use strict';
@@ -261,7 +652,7 @@
   }
   spkEl.addEventListener('change', applySpeaker);
 
-  /* ============ PEER (главное исправление) ============ */
+  /* ============ PEER ============ */
   const ICE = {
     iceServers: [
       {urls:'stun:stun.l.google.com:19302'},
@@ -316,7 +707,6 @@
         return await openPeerOnce(id);
       }catch(e){
         lastErr = e;
-        // не повторяем — эти ошибки финальные
         if(e && (e.type === 'unavailable-id' || e.type === 'invalid-id' || e.type === 'browser-incompatible')){
           throw e;
         }
@@ -546,7 +936,6 @@
 
     connectToHost();
 
-    // Финальный предохранитель
     setTimeout(() => {
       if(!hostConnected && S.peers.size <= 1){
         scheduleHostRetry();
@@ -769,3 +1158,5 @@
   }
 })();
 </script>
+</body>
+</html>
