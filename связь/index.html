@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Room</title>
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --text: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --border: #d2d2d7;
+            --primary: #0071e3;
+            --primary-hover: #0077ed;
+            --danger: #ff3b30;
+            --danger-hover: #ff453a;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg: #1c1c1e;
+            --surface: #2c2c2e;
+            --text: #f5f5f7;
+            --text-secondary: #98989d;
+            --border: #3a3a3c;
+            --primary: #0a84ff;
+            --primary-hover: #409cff;
+            --danger: #ff453a;
+            --danger-hover: #ff6961;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 18px;
+            padding: 32px 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, background 0.3s, color 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-family: inherit;
+            margin-top: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: background 0.3s, border-color 0.3s;
+            z-index: 100;
+        }
+
+        /* Комната */
+        #room {
+            display: none;
+        }
+
+        .participants {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .participant {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .participant-name {
+            font-size: 15px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .participant-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #34c759;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .status-dot.connecting {
+            background: #ffcc00;
+        }
+
+        .room-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .room-id {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .room-id code {
+            background: var(--bg);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        .copy-hint {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-left: 6px;
+        }
+
+        audio {
+            display: none;
+        }
+
+        .error {
+            color: var(--danger);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 12px;
+            min-height: 18px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
+
+    <div class="container">
+        <!-- Экран входа -->
+        <div class="card" id="joinScreen">
+            <h1>🎙 Audio Room</h1>
+            <p class="subtitle">До 5 участников · P2P · Без сервера</p>
+
+            <div class="field">
+                <label for="nameInput">Ваше имя</label>
+                <input type="text" id="nameInput" placeholder="Введите имя" maxlength="20" autocomplete="off">
+            </div>
+
+            <div class="field">
+                <label for="roomInput">Комната</label>
+                <input type="text" id="roomInput" placeholder="Название комнаты" maxlength="30" autocomplete="off">
+            </div>
+
+            <div class="field">
+                <label for="micSelect">Микрофон</label>
+                <select id="micSelect"></select>
+            </div>
+
+            <div class="field">
+                <label for="speakerSelect">Динамик</label>
+                <select id="speakerSelect"></select>
+            </div>
+
+            <button class="btn btn-primary" id="joinBtn">Войти в комнату</button>
+            <p class="error" id="errorMsg"></p>
+        </div>
+
+        <!-- Экран комнаты -->
+        <div class="card" id="room" style="display:none;">
+            <div class="room-header">
+                <div>
+                    <h1 style="font-size:18px;text-align:left;margin:0;">Комната</h1>
+                    <div class="room-id">ID: <code id="roomIdDisplay"></code><span class="copy-hint"
+                            id="copyHint">нажмите чтобы скопировать</span></div>
+                </div>
+            </div>
+
+            <div class="participants" id="participantsList"></div>
+
+            <button class="btn btn-danger" id="leaveBtn">Выйти из звонка</button>
+        </div>
+    </div>
+
+    <!-- Невидимые аудио-элементы для каждого участника -->
+    <div id="audioContainer"></div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            /* ---------- Состояние ---------- */
+            const state = {
+                myId: null,
+                myName: '',
+                roomId: '',
+                peer: null,
+                localStream: null,
+                calls: {},          // peerId -> call object
+                connections: {},     // peerId -> data connection
+                participants: {},    // peerId -> { name }
+                devices: { mics: [], speakers: [] }
+            };
+
+            const MAX_PARTICIPANTS = 5;
+            const PEER_PREFIX = 'audioroom-';
+
+            /* ---------- DOM ---------- */
+            const $ = id => document.getElementById(id);
+            const joinScreen = $('joinScreen');
+            const roomScreen = $('room');
+            const nameInput = $('nameInput');
+            const roomInput = $('roomInput');
+            const micSelect = $('micSelect');
+            const speakerSelect = $('speakerSelect');
+            const joinBtn = $('joinBtn');
+            const leaveBtn = $('leaveBtn');
+            const errorMsg = $('errorMsg');
+            const participantsList = $('participantsList');
+            const roomIdDisplay = $('roomIdDisplay');
+            const copyHint = $('copyHint');
+            const audioContainer = $('audioContainer');
+            const themeToggle = $('themeToggle');
+
+            /* ---------- Тема ---------- */
+            function initTheme() {
+                const saved = localStorage.getItem('audio-room-theme');
+                if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    themeToggle.textContent = '🌙';
+                }
+            }
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+                themeToggle.textContent = isDark ? '🌙' : '☀️';
+                localStorage.setItem('audio-room-theme', isDark ? 'light' : 'dark');
+            });
+            initTheme();
+
+            /* ---------- Устройства ---------- */
+            async function enumerateDevices() {
+                try {
+                    // Запрашиваем разрешение, чтобы получить labels устройств
+                    const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    tempStream.getTracks().forEach(t => t.stop());
+
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+
+                    state.devices.mics = devices.filter(d => d.kind === 'audioinput');
+                    state.devices.speakers = devices.filter(d => d.kind === 'audiooutput');
+
+                    // Заполняем микрофоны
+                    micSelect.innerHTML = '';
+                    if (state.devices.mics.length === 0) {
+                        micSelect.innerHTML = '<option value="">Микрофон не найден</option>';
+                    } else {
+                        state.devices.mics.forEach((d, i) => {
+                            const opt = document.createElement('option');
+                            opt.value = d.deviceId;
+                            opt.textContent = d.label || `Микрофон ${i + 1}`;
+                            micSelect.appendChild(opt);
+                        });
+                    }
+
+                    // Заполняем динамики
+                    speakerSelect.innerHTML = '';
+                    if (state.devices.speakers.length === 0) {
+                        // setSinkId может не поддерживаться (Safari)
+                        speakerSelect.innerHTML = '<option value="default">Системный (по умолчанию)</option>';
+                        speakerSelect.disabled = true;
+                    } else {
+                        state.devices.speakers.forEach((d, i) => {
+                            const opt = document.createElement('option');
+                            opt.value = d.deviceId;
+                            opt.textContent = d.label || `Динамик ${i + 1}`;
+                            speakerSelect.appendChild(opt);
+                        });
+                        // Проверяем поддержку setSinkId
+                        if (typeof HTMLMediaElement.prototype.setSinkId === 'undefined') {
+                            speakerSelect.disabled = true;
+                            speakerSelect.title = 'Смена динамика не поддерживается в этом браузере';
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Ошибка доступа к устройствам:', err);
+                    micSelect.innerHTML = '<option value="">Нет доступа к микрофону</option>';
+                    speakerSelect.innerHTML = '<option value="default">Системный (по умолчанию)</option>';
+                }
+            }
+
+            // Обновляем список при подключении/отключении устройств
+            if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
+                navigator.mediaDevices.addEventListener('devicechange', enumerateDevices);
+            }
+
+            /* ---------- Получение локального аудио ---------- */
+            async function getLocalStream(deviceId) {
+                const constraints = {
+                    audio: deviceId ? { deviceId: { exact: deviceId } } : true,
+                    video: false
+                };
+                return await navigator.mediaDevices.getUserMedia(constraints);
+            }
+
+            /* ---------- Применение динамика ---------- */
+            async function applySpeaker(deviceId) {
+                const audios = audioContainer.querySelectorAll('audio');
+                for (const audio of audios) {
+                    if (typeof audio.setSinkId === 'function' && deviceId) {
+                        try {
+                            await audio.setSinkId(deviceId);
+                        } catch (e) {
+                            console.warn('Не удалось переключить динамик:', e);
+                        }
+                    }
+                }
+            }
+
+            /* ---------- Генерация ID комнаты ---------- */
+            function makePeerId(roomId) {
+                return PEER_PREFIX + roomId.toLowerCase().replace(/[^a-z0-9]/g, '');
+            }
+
+            /* ---------- Инициализация PeerJS ---------- */
+            function createPeer(peerId) {
+                return new Promise((resolve, reject) => {
+                    const peer = new Peer(peerId, {
+                        config: {
+                            iceServers: [
+                                { urls: 'stun:stun.l.google.com:19302' },
+                                { urls: 'stun:stun1.l.google.com:19302' }
+                            ]
+                        },
+                        debug: 1
+                    });
+
+                    peer.on('open', id => resolve({ peer, id }));
+                    peer.on('error', err => {
+                        if (err.type === 'unavailable-id') {
+                            reject(new Error('Комната уже существует. Попробуйте другое название.'));
+                        } else {
+                            reject(err);
+                        }
+                    });
+
+                    // Таймаут
+                    setTimeout(() => reject(new Error('Не удалось подключиться к серверу. Проверьте интернет.')), 15000);
+                });
+            }
+
+            /* ---------- Обработка входящих ---------- */
+            function setupPeerHandlers(peer, localStream) {
+                // Входящий звонок
+                peer.on('call', call => {
+                    // Проверяем лимит
+                    if (Object.keys(state.calls).length >= MAX_PARTICIPANTS - 1) {
+                        call.close();
+                        return;
+                    }
+                    call.answer(localStream);
+                    handleCall(call);
+                });
+
+                // Входящее data-соединение (для обмена именами)
+                peer.on('connection', conn => {
+                    conn.on('data', data => {
+                        if (data && data.type === 'hello') {
+                            state.participants[conn.peer] = { name: data.name || 'Участник' };
+                            state.connections[conn.peer] = conn;
+                            renderParticipants();
+
+                            // Отправляем всех известных участников новому
+                            const knownPeers = Object.keys(state.participants)
+                                .filter(id => id !== conn.peer)
+                                .map(id => ({ id, name: state.participants[id].name }));
+                            conn.send({ type: 'peers', peers: knownPeers });
+
+                            // Инициируем звонок новому участнику (если ещё нет)
+                            if (!state.calls[conn.peer]) {
+                                const call = peer.call(conn.peer, localStream);
+                                if (call) handleCall(call);
+                            }
+                        }
+
+                        if (data && data.type === 'peers') {
+                            // Подключаемся ко всем, кого ещё нет
+                            data.peers.forEach(p => {
+                                if (p.id === state.myId || state.calls[p.id]) return;
+                                state.participants[p.id] = { name: p.name };
+                                // Отправляем hello
+                                const conn2 = peer.connect(p.id);
+                                if (conn2) {
+                                    conn2.on('open', () => {
+                                        conn2.send({ type: 'hello', name: state.myName });
+                                        state.connections[p.id] = conn2;
+                                    });
+                                }
+                                // Звоним
+                                const call = peer.call(p.id, localStream);
+                                if (call) handleCall(call);
+                            });
+                            renderParticipants();
+                        }
+                    });
+
+                    conn.on('open', () => {
+                        state.connections[conn.peer] = conn;
+                        conn.send({ type: 'hello', name: state.myName });
+                    });
+                });
+            }
+
+            /* ---------- Обработка звонка ---------- */
+            function handleCall(call) {
+                if (state.calls[call.peer]) {
+                    call.close();
+                    return;
+                }
+                state.calls[call.peer] = call;
+
+                call.on('stream', remoteStream => {
+                    // Создаём или переиспользуем audio-элемент
+                    let audio = document.getElementById('audio-' + call.peer);
+                    if (!audio) {
+                        audio = document.createElement('audio');
+                        audio.id = 'audio-' + call.peer;
+                        audio.autoplay = true;
+                        audioContainer.appendChild(audio);
+                    }
+                    audio.srcObject = remoteStream;
+
+                    // Применяем выбранный динамик
+                    const speakerId = speakerSelect.value;
+                    if (speakerId && typeof audio.setSinkId === 'function') {
+                        audio.setSinkId(speakerId).catch(() => { });
+                    }
+
+                    // Обновляем имя, если ещё нет
+                    if (!state.participants[call.peer]) {
+                        state.participants[call.peer] = { name: 'Участник' };
+                    }
+                    renderParticipants();
+                });
+
+                call.on('close', () => {
+                    removePeer(call.peer);
+                });
+
+                call.on('error', () => {
+                    removePeer(call.peer);
+                });
+            }
+
+            /* ---------- Удаление участника ---------- */
+            function removePeer(peerId) {
+                if (state.calls[peerId]) {
+                    try { state.calls[peerId].close(); } catch (e) { }
+                    delete state.calls[peerId];
+                }
+                if (state.connections[peerId]) {
+                    try { state.connections[peerId].close(); } catch (e) { }
+                    delete state.connections[peerId];
+                }
+                delete state.participants[peerId];
+
+                const audio = document.getElementById('audio-' + peerId);
+                if (audio) {
+                    audio.srcObject = null;
+                    audio.remove();
+                }
+                renderParticipants();
+            }
+
+            /* ---------- Рендер участников ---------- */
+            function renderParticipants() {
+                const ids = Object.keys(state.participants);
+
+                if (ids.length === 0) {
+                    participantsList.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:14px;">Ожидание участников...</div>';
+                    return;
+                }
+
+                participantsList.innerHTML = '';
+                ids.forEach(id => {
+                    const p = state.participants[id];
+                    const isConnected = !!state.calls[id];
+
+                    const el = document.createElement('div');
+                    el.className = 'participant';
+                    el.innerHTML = `
+        <div class="avatar">${(p.name || '?')[0].toUpperCase()}</div>
+        <div style="flex:1;">
+          <div class="participant-name">${escapeHtml(p.name)}</div>
+          <div class="participant-status">
+            <span class="status-dot ${isConnected ? '' : 'connecting'}"></span>
+            ${isConnected ? 'В сети' : 'Подключение...'}
+          </div>
+        </div>
+      `;
+                    participantsList.appendChild(el);
+                });
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str || '';
+                return div.innerHTML;
+            }
+
+            /* ---------- Вход ---------- */
+            async function join() {
+                errorMsg.textContent = '';
+                const name = nameInput.value.trim();
+                const roomId = roomInput.value.trim();
+
+                if (!name) { errorMsg.textContent = 'Введите имя'; return; }
+                if (!roomId) { errorMsg.textContent = 'Введите название комнаты'; return; }
+
+                joinBtn.disabled = true;
+                joinBtn.textContent = 'Подключение...';
+
+                try {
+                    // 1. Получаем микрофон
+                    const micId = micSelect.value;
+                    state.localStream = await getLocalStream(micId);
+                    state.myName = name;
+                    state.roomId = roomId;
+
+                    // 2. Создаём Peer
+                    const peerId = makePeerId(roomId);
+                    const { peer, id } = await createPeer(peerId);
+                    state.peer = peer;
+                    state.myId = id;
+
+                    // 3. Настраиваем обработчики
+                    setupPeerHandlers(peer, state.localStream);
+
+                    // 4. Пробуем подключиться к существующим участникам
+                    // Отправляем hello всем известным (если мы не первые)
+                    // PeerJS не даёт список всех, поэтому используем broadcast через хост
+                    // Просто ждём входящих соединений
+
+                    // Но если кто-то уже в комнате — они получат уведомление о нашем подключении?
+                    // Нет, PeerJS не уведомляет о новых peer'ах автоматически.
+                    // Поэтому используем data-канал: при входе рассылаем hello всем, кого знаем.
+                    // Проблема: мы не знаем ID других.
+                    // Решение: используем фиксированный префикс и пробуем подключиться к тем,
+                    // кто уже мог зайти. Но их ID неизвестны.
+                    // 
+                    // Более простое решение: первый вошедший становится "хостом".
+                    // Но мы не знаем, первый ли мы.
+                    // 
+                    // Практический подход: при входе пробуем подключиться к ID вида room-1, room-2 и т.д.
+                    // Но это ненадёжно.
+                    //
+                    // Альтернатива: используем data-канал к самому себе? Нет.
+                    //
+                    // Реальный рабочий вариант для P2P без сервера:
+                    // Каждый новый участник получает список от того, кто уже в комнате.
+                    // Но как узнать, кто в комнате? Только через signaling.
+                    // PeerJS Cloud не предоставляет список peer'ов в комнате.
+                    //
+                    // Поэтому используем подход: все подключаются к одному "хосту" (первому вошедшему).
+                    // Но как определить хоста? Через попытку подключения к фиксированному ID.
+                    // 
+                    // Упрощение: используем roomId как ID хоста.
+                    // Первый, кто зашёл с этим roomId, становится хостом.
+                    // Остальные подключаются к нему.
+                    // 
+                    // Переделываем:
+                    // - Хост: peerId = roomId
+                    // - Клиенты: peerId = roomId + '-' + random
+                    // 
+                    // Но тогда клиенты не могут получить список других клиентов.
+                    // Хост должен раздавать список.
+
+                    // Пересоздаём peer с правильной логикой
+                    peer.destroy();
+                    await setupRoom(roomId, name);
+                } catch (err) {
+                    console.error(err);
+                    errorMsg.textContent = err.message || 'Ошибка подключения';
+                    joinBtn.disabled = false;
+                    joinBtn.textContent = 'Войти в комнату';
+                    if (state.localStream) {
+                        state.localStream.getTracks().forEach(t => t.stop());
+                        state.localStream = null;
+                    }
+                }
+            }
+
+            /* ---------- Логика комнаты ---------- */
+            async function setupRoom(roomId, name) {
+                const hostId = makePeerId(roomId);
+                state.myName = name;
+                state.roomId = roomId;
+
+                // Пытаемся стать хостом
+                let isHost = false;
+                let peer;
+                let myPeerId;
+
+                try {
+                    const result = await createPeer(hostId);
+                    peer = result.peer;
+                    myPeerId = result.id;
+                    isHost = true;
+                } catch (err) {
+                    // Хост уже существует — мы клиент
+                    const clientId = hostId + '-' + Math.random().toString(36).slice(2, 8);
+                    const result = await createPeer(clientId);
+                    peer = result.peer;
+                    myPeerId = result.id;
+                    isHost = false;
+                }
+
+                state.peer = peer;
+                state.myId = myPeerId;
+
+                // Получаем локальный поток
+                const micId = micSelect.value;
+                state.localStream = await getLocalStream(micId);
+
+                // === Хост ===
+                if (isHost) {
+                    // Обработка входящих data-соединений
+                    peer.on('connection', conn => {
+                        conn.on('data', data => {
+                            if (data.type === 'hello') {
+                                // Проверяем лимит
+                                if (Object.keys(state.participants).length >= MAX_PARTICIPANTS - 1) {
+                                    conn.send({ type: 'full' });
+                                    setTimeout(() => conn.close(), 500);
+                                    return;
+                                }
+
+                                state.participants[conn.peer] = { name: data.name };
+                                state.connections[conn.peer] = conn;
+
+                                // Отправляем новому список всех
+                                const peers = Object.keys(state.participants)
+                                    .filter(id => id !== conn.peer)
+                                    .map(id => ({ id, name: state.participants[id].name }));
+                                conn.send({ type: 'peers', peers });
+
+                                // Рассылаем всем обновлённый список
+                                broadcastPeers();
+
+                                renderParticipants();
+
+                                // Хост звонит новому
+                                if (!state.calls[conn.peer]) {
+                                    const call = peer.call(conn.peer, state.localStream);
+                                    if (call) handleCall(call);
+                                }
+                            }
+                        });
+
+                        conn.on('open', () => {
+                            state.connections[conn.peer] = conn;
+                        });
+                    });
+
+                    // Входящие звонки
+                    peer.on('call', call => {
+                        call.answer(state.localStream);
+                        handleCall(call);
+                    });
+
+                    state.participants['__host__'] = { name: name };
+                    // Хост не добавляет себя в participants — он и есть state.myId
+                    // Но для рендера добавим себя отдельно? Нет, показываем только других.
+                    // Себя показывать не обязательно, но можно.
+                    // Добавим себя как отдельную запись.
+                    state.participants[myPeerId] = { name: name };
+                    renderParticipants();
+                }
+
+                // === Клиент ===
+                if (!isHost) {
+                    const conn = peer.connect(hostId);
+                    conn.on('open', () => {
+                        state.connections[hostId] = conn;
+                        conn.send({ type: 'hello', name: name });
+                    });
+
+                    conn.on('data', data => {
+                        if (data.type === 'peers') {
+                            // Подключаемся ко всем участникам, кроме себя и хоста
+                            data.peers.forEach(p => {
+                                if (p.id === state.myId) return;
+                                if (state.participants[p.id]) return;
+                                state.participants[p.id] = { name: p.name };
+
+                                // Звоним
+                                if (!state.calls[p.id]) {
+                                    const call = peer.call(p.id, state.localStream);
+                                    if (call) handleCall(call);
+                                }
+                            });
+                            renderParticipants();
+                        }
+                        if (data.type === 'full') {
+                            errorMsg.textContent = 'Комната заполнена (максимум 5)';
+                            leaveRoom();
+                        }
+                    });
+
+                    // Хост добавит нас в participants через broadcast
+                    // но мы сами тоже добавим хоста
+                    state.participants[hostId] = { name: 'Хост' };
+
+                    // Хост позвонит нам сам
+                    peer.on('call', call => {
+                        call.answer(state.localStream);
+                        handleCall(call);
+                    });
+
+                    // Также слушаем data-соединения от других клиентов
+                    peer.on('connection', conn => {
+                        conn.on('data', data => {
+                            if (data.type === 'hello') {
+                                state.participants[conn.peer] = { name: data.name };
+                                state.connections[conn.peer] = conn;
+                                renderParticipants();
+                                if (!state.calls[conn.peer]) {
+                                    const call = peer.call(conn.peer, state.localStream);
+                                    if (call) handleCall(call);
+                                }
+                            }
+                        });
+                        conn.on('open', () => {
+                            state.connections[conn.peer] = conn;
+                        });
+                    });
+
+                    state.participants[myPeerId] = { name: name };
+                    renderParticipants();
+                }
+
+                // Переключаем экраны
+                joinScreen.style.display = 'none';
+                roomScreen.style.display = 'block';
+                roomIdDisplay.textContent = roomId;
+
+                // Обновляем список устройств (чтобы точно были актуальные)
+                enumerateDevices();
+            }
+
+            /* ---------- Broadcast списка участников ---------- */
+            function broadcastPeers() {
+                const peers = Object.keys(state.participants)
+                    .filter(id => id !== '__host__')
+                    .map(id => ({ id, name: state.participants[id].name }));
+
+                Object.values(state.connections).forEach(conn => {
+                    if (conn.open) {
+                        try { conn.send({ type: 'peers', peers }); } catch (e) { }
+                    }
+                });
+            }
+
+            /* ---------- Выход ---------- */
+            function leaveRoom() {
+                // Останавливаем все медиа
+                if (state.localStream) {
+                    state.localStream.getTracks().forEach(t => t.stop());
+                    state.localStream = null;
+                }
+
+                // Закрываем все звонки
+                Object.values(state.calls).forEach(c => { try { c.close(); } catch (e) { } });
+                Object.values(state.connections).forEach(c => { try { c.close(); } catch (e) { } });
+
+                // Уничтожаем peer
+                if (state.peer) {
+                    try { state.peer.destroy(); } catch (e) { }
+                }
+
+                // Очищаем аудио
+                audioContainer.innerHTML = '';
+
+                // Сброс состояния
+                state.peer = null;
+                state.calls = {};
+                state.connections = {};
+                state.participants = {};
+                state.myId = null;
+
+                // Показываем экран входа
+                roomScreen.style.display = 'none';
+                joinScreen.style.display = 'block';
+                joinBtn.disabled = false;
+                joinBtn.textContent = 'Войти в комнату';
+                errorMsg.textContent = '';
+            }
+
+            /* ---------- Смена динамика на лету ---------- */
+            speakerSelect.addEventListener('change', () => {
+                applySpeaker(speakerSelect.value);
+            });
+
+            /* ---------- Копирование ID комнаты ---------- */
+            roomIdDisplay.addEventListener('click', () => {
+                navigator.clipboard.writeText(roomIdDisplay.textContent).then(() => {
+                    copyHint.textContent = 'скопировано!';
+                    setTimeout(() => { copyHint.textContent = 'нажмите чтобы скопировать'; }, 2000);
+                });
+            });
+
+            /* ---------- Кнопки ---------- */
+            joinBtn.addEventListener('click', join);
+            leaveBtn.addEventListener('click', leaveRoom);
+
+            nameInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') join();
+            });
+            roomInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') join();
+            });
+
+            /* ---------- Инициализация ---------- */
+            enumerateDevices();
+
+            // Предзаполняем имя из localStorage
+            const savedName = localStorage.getItem('audio-room-name');
+            if (savedName) nameInput.value = savedName;
+            nameInput.addEventListener('change', () => {
+                localStorage.setItem('audio-room-name', nameInput.value.trim());
+            });
+
+            // Генерируем случайное имя комнаты при первом заходе
+            if (!roomInput.value) {
+                const rand = Math.random().toString(36).slice(2, 8);
+                roomInput.placeholder = 'Например: ' + rand;
+            }
+
+            // Закрытие вкладки — очистка
+            window.addEventListener('beforeunload', () => {
+                if (state.localStream) {
+                    state.localStream.getTracks().forEach(t => t.stop());
+                }
+            });
+
+        })();
+    </script>
+</body>
+
+</html>
