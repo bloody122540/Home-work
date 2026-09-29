@@ -2,7 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
 <title>Audio Rooms</title>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
@@ -13,6 +19,10 @@
   --danger:#ef4444; --danger-h:#dc2626;
   --success:#10b981; --warning:#f59e0b;
   --shadow:0 8px 30px rgba(15,23,42,.08);
+  --sa-t:env(safe-area-inset-top,0px);
+  --sa-b:env(safe-area-inset-bottom,0px);
+  --sa-l:env(safe-area-inset-left,0px);
+  --sa-r:env(safe-area-inset-right,0px);
 }
 [data-theme="dark"]{
   --bg:#0a0f1e; --card:#131a2b; --text:#e8eefc; --muted:#8896b0;
@@ -23,16 +33,26 @@
   --shadow:0 8px 30px rgba(0,0,0,.5);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
+html{height:100%;-webkit-text-size-adjust:100%}
 body{
+  min-height:100vh; min-height:100dvh;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   background:var(--bg); color:var(--text);
   transition:background .3s,color .3s;
   -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior-y:none;
   overflow-x:hidden;
 }
-.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 16px}
-.screen{width:100%;max-width:440px;animation:up .35s cubic-bezier(.2,.9,.3,1.1)}
+.wrap{
+  min-height:100vh; min-height:100dvh;
+  display:flex;
+  padding:calc(20px + var(--sa-t)) calc(16px + var(--sa-r)) calc(20px + var(--sa-b)) calc(16px + var(--sa-l));
+}
+.screen{
+  width:100%; max-width:440px; margin:auto;
+  animation:up .35s cubic-bezier(.2,.9,.3,1.1);
+}
 .screen.hidden{display:none}
 @keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 
@@ -49,11 +69,22 @@ body{
 label{display:block;font-size:11px;font-weight:600;color:var(--muted);
   margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
 input,select{
-  width:100%;padding:11px 13px;font-size:15px;
+  width:100%;padding:11px 13px;
+  font-size:16px;                 /* 16px — иначе iOS зумит при фокусе */
   border:1.5px solid var(--border);border-radius:11px;
   background:var(--input);color:var(--text);
   outline:none;font-family:inherit;
   transition:border-color .15s,box-shadow .15s;
+  -webkit-appearance:none;appearance:none;
+  min-height:44px;                /* удобная зона касания */
+}
+select{
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),
+                   linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+  padding-right:36px;
 }
 input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
 input::placeholder{color:var(--muted);opacity:.7}
@@ -63,8 +94,11 @@ select:disabled{opacity:.55;cursor:not-allowed}
   width:100%;padding:12px 18px;font-size:14px;font-weight:600;
   border:none;border-radius:11px;cursor:pointer;font-family:inherit;
   transition:all .18s;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;
+  touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;
 }
-.btn:active:not(:disabled){transform:scale(.98)}
+.btn:active:not(:disabled){transform:scale(.97)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(79,70,229,.3)}
 .btn-primary:hover:not(:disabled){background:var(--primary-h);transform:translateY(-1px)}
@@ -78,8 +112,8 @@ select:disabled{opacity:.55;cursor:not-allowed}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
 .row{display:flex;gap:8px}
-.row input{flex:1}
-.row .btn{width:auto;padding:11px 18px}
+.row input{flex:1;min-width:0}
+.row .btn{width:auto;padding:11px 18px;flex-shrink:0}
 
 details.settings{
   background:var(--input);border:1.5px solid var(--border);
@@ -87,7 +121,7 @@ details.settings{
 }
 details.settings summary{cursor:pointer;font-size:12px;font-weight:600;
   color:var(--muted);list-style:none;user-select:none;
-  display:flex;align-items:center;gap:6px}
+  display:flex;align-items:center;gap:6px;min-height:24px}
 details.settings summary::-webkit-details-marker{display:none}
 details.settings summary::before{content:'⚙';transition:transform .2s}
 details.settings[open] summary::before{transform:rotate(90deg)}
@@ -96,11 +130,12 @@ details.settings > div{margin-top:10px}
 .rooms{margin-top:16px}
 .rooms h3{font-size:11px;font-weight:600;color:var(--muted);
   text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
-.rooms-list{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto}
+.rooms-list{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;
+  -webkit-overflow-scrolling:touch}
 .room-item{display:flex;align-items:center;gap:10px;
   padding:10px 12px;background:var(--input);
   border:1.5px solid var(--border);border-radius:11px;
-  cursor:pointer;transition:all .15s}
+  cursor:pointer;transition:all .15s;touch-action:manipulation}
 .room-item:hover{border-color:var(--primary);transform:translateX(2px)}
 .room-ic{width:32px;height:32px;border-radius:9px;
   background:var(--primary);color:#fff;
@@ -110,7 +145,7 @@ details.settings > div{margin-top:10px}
 .room-nm{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .room-meta{font-size:11px;color:var(--muted);font-family:monospace;margin-top:1px}
 .room-del{background:none;border:none;color:var(--muted);cursor:pointer;
-  font-size:14px;padding:4px 6px;border-radius:6px;font-family:inherit}
+  font-size:14px;padding:6px 8px;border-radius:6px;font-family:inherit;flex-shrink:0}
 .room-del:hover{color:var(--danger);background:rgba(239,68,68,.1)}
 .empty{text-align:center;padding:16px;color:var(--muted);font-size:12px;
   background:var(--input);border-radius:11px;border:1.5px dashed var(--border)}
@@ -124,13 +159,14 @@ details.settings > div{margin-top:10px}
 .room-hd h2{font-size:17px;font-weight:700}
 .room-id{font-size:12px;color:var(--muted);cursor:pointer;
   font-family:monospace;display:inline-flex;align-items:center;gap:5px;
-  padding:3px 8px;border-radius:6px;transition:all .15s}
+  padding:5px 8px;border-radius:6px;transition:all .15s;touch-action:manipulation}
 .room-id:hover{color:var(--primary);background:var(--input)}
 .room-id::before{content:'#';opacity:.5}
-.room-hd .btn{width:auto;padding:8px 14px;font-size:12px}
+.room-hd .btn{width:auto;padding:8px 14px;font-size:12px;min-height:38px}
 
 .parts{display:flex;flex-direction:column;gap:7px;
-  min-height:80px;max-height:340px;overflow-y:auto;margin-bottom:12px}
+  min-height:80px;max-height:340px;overflow-y:auto;margin-bottom:12px;
+  -webkit-overflow-scrolling:touch}
 .part{display:flex;align-items:center;gap:10px;
   padding:10px 12px;background:var(--input);
   border:1.5px solid var(--border);border-radius:12px;
@@ -154,11 +190,11 @@ details.settings > div{margin-top:10px}
 
 .footer{display:flex;align-items:center;justify-content:space-between;
   padding-top:12px;border-top:1px solid var(--border);
-  font-size:12px;color:var(--muted)}
+  font-size:12px;color:var(--muted);gap:10px;flex-wrap:wrap}
 .counter{display:flex;align-items:center;gap:6px;font-weight:600}
 
 /* Toast */
-.toast{position:fixed;bottom:22px;left:50%;
+.toast{position:fixed;bottom:calc(22px + var(--sa-b));left:50%;
   transform:translateX(-50%) translateY(80px);
   padding:11px 20px;border-radius:11px;
   background:var(--card);border:1.5px solid var(--border);
@@ -169,12 +205,28 @@ details.settings > div{margin-top:10px}
 .toast.error{border-color:var(--danger);color:var(--danger)}
 .toast.success{border-color:var(--success);color:var(--success)}
 
-.theme-btn{position:fixed;top:16px;right:16px;width:42px;height:42px;
+.theme-btn{position:fixed;
+  top:calc(16px + var(--sa-t));right:calc(16px + var(--sa-r));
+  width:44px;height:44px;
   border-radius:12px;border:1.5px solid var(--border);
   background:var(--card);color:var(--text);font-size:18px;
   cursor:pointer;box-shadow:var(--shadow);transition:all .2s;
-  z-index:100;display:flex;align-items:center;justify-content:center}
+  z-index:100;display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation}
 .theme-btn:hover{transform:translateY(-2px)}
+
+/* Кнопка «включить звук» (мобильные браузеры блокируют автоплей) */
+.unlock-btn{
+  position:fixed;left:50%;bottom:calc(78px + var(--sa-b));
+  transform:translateX(-50%);
+  display:none;align-items:center;gap:8px;
+  padding:13px 22px;border-radius:999px;border:none;
+  background:var(--primary);color:#fff;font-size:14px;font-weight:600;
+  font-family:inherit;cursor:pointer;z-index:300;
+  box-shadow:0 8px 26px rgba(79,70,229,.45);
+  touch-action:manipulation;animation:up .3s;
+}
+.unlock-btn:active{transform:translateX(-50%) scale(.96)}
 
 .spinner{width:15px;height:15px;border:2.5px solid rgba(255,255,255,.35);
   border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;
@@ -185,13 +237,23 @@ details.settings > div{margin-top:10px}
   border-radius:11px;padding:10px 12px;margin-bottom:12px;font-size:11px}
 .invite label{margin-bottom:6px;display:block}
 .invite-row{display:flex;gap:6px;align-items:center}
-.invite-row input{font-size:11px;padding:8px 10px;font-family:monospace}
-.invite-row button{width:auto;padding:8px 12px;font-size:11px;flex-shrink:0}
+.invite-row input{font-size:12px;padding:8px 10px;font-family:monospace;min-height:40px}
+.invite-row button{width:auto;padding:8px 12px;font-size:11px;flex-shrink:0;min-height:40px}
 
+.warn{background:rgba(245,158,11,.12);border:1.5px solid var(--warning);
+  color:var(--warning);border-radius:11px;padding:10px 12px;
+  font-size:12px;line-height:1.45;margin-bottom:12px;font-weight:500}
+
+/* Мобильные правки */
 @media(max-width:480px){
   .card{padding:22px 18px;border-radius:18px}
   .card h1{font-size:19px}
   .room-hd h2{font-size:15px}
+  .parts{max-height:none}
+  .wrap{padding:calc(14px + var(--sa-t)) calc(12px + var(--sa-r)) calc(14px + var(--sa-b)) calc(12px + var(--sa-l))}
+}
+@media(max-height:520px){
+  .parts{max-height:180px}
 }
 </style>
 </head>
@@ -205,9 +267,15 @@ details.settings > div{margin-top:10px}
       <h1>🎙 Audio Rooms</h1>
       <p class="sub">До 5 участников · P2P · Без сервера</p>
 
+      <div class="warn" id="secureWarn" style="display:none">
+        ⚠️ Для доступа к микрофону нужен <b>HTTPS</b> (или localhost).
+        Откройте страницу по защищённому адресу.
+      </div>
+
       <div class="field">
         <label for="name">Ваше имя</label>
-        <input id="name" type="text" placeholder="Введите имя" maxlength="20" autocomplete="off">
+        <input id="name" type="text" placeholder="Введите имя" maxlength="20"
+               autocomplete="off" autocapitalize="words" enterkeyhint="next" spellcheck="false">
       </div>
 
       <details class="settings">
@@ -231,7 +299,9 @@ details.settings > div{margin-top:10px}
       <div class="field">
         <label for="roomId">ID комнаты</label>
         <div class="row">
-          <input id="roomId" type="text" placeholder="например abc-123" maxlength="40" autocomplete="off">
+          <input id="roomId" type="text" placeholder="например abc-123" maxlength="40"
+                 autocomplete="off" autocapitalize="off" autocorrect="off"
+                 spellcheck="false" enterkeyhint="go" inputmode="latin">
           <button class="btn btn-secondary" id="joinBtn">Войти</button>
         </div>
       </div>
@@ -281,6 +351,7 @@ details.settings > div{margin-top:10px}
   </section>
 </div>
 
+<button class="unlock-btn" id="unlockBtn">🔊 Включить звук</button>
 <div class="toast" id="toast"></div>
 <div id="audio" style="display:none"></div>
 
@@ -310,9 +381,9 @@ details.settings > div{margin-top:10px}
   const S = {
     myId: null, myName: '', roomId: '',
     isHost: false, peer: null, localStream: null,
-    calls: new Map(),          // peerId → call
-    conns: new Map(),          // peerId → DataConnection
-    peers: new Map(),          // peerId → { name, isHost }   (единый источник)
+    calls: new Map(),
+    conns: new Map(),
+    peers: new Map(),
     hostId: null
   };
 
@@ -330,6 +401,7 @@ details.settings > div{margin-top:10px}
   const themeBtn = $('themeBtn'), toastEl = $('toast');
   const audioBox = $('audio');
   const roomsSection = $('roomsSection'), roomsList = $('roomsList');
+  const unlockBtn = $('unlockBtn'), secureWarn = $('secureWarn');
 
   /* ============ UTIL ============ */
   const uid = (n=6) => {
@@ -349,7 +421,7 @@ details.settings > div{margin-top:10px}
     toastEl.textContent = msg;
     toastEl.className = 'toast show ' + type;
     clearTimeout(toastT);
-    toastT = setTimeout(() => toastEl.classList.remove('show'), 2400);
+    toastT = setTimeout(() => toastEl.classList.remove('show'), 2600);
   };
 
   const setStatus = (txt, ok) => {
@@ -357,6 +429,100 @@ details.settings > div{margin-top:10px}
     const d = statusWrap.querySelector('.dot');
     d.classList.toggle('wait', !ok);
   };
+
+  async function copyText(text){
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    }catch(e){}
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly','');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      const ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    }catch(e){ return false; }
+  }
+
+  /* ============ БЕЗОПАСНЫЙ КОНТЕКСТ ============ */
+  const isSecure = location.protocol === 'https:' ||
+                   location.hostname === 'localhost' ||
+                   location.hostname === '127.0.0.1' ||
+                   location.hostname === '[::1]';
+  const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  if(!isSecure || !hasMedia){
+    secureWarn.style.display = 'block';
+  }
+
+  /* ============ РАЗБЛОКИРОВКА ЗВУКА (мобильные) ============ */
+  let audioCtx = null;
+  function ensureAudioCtx(){
+    try{
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return;
+      if(!audioCtx) audioCtx = new AC();
+      if(audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    }catch(e){}
+  }
+  function setUnlock(show){
+    unlockBtn.style.display = show ? 'flex' : 'none';
+  }
+  function checkAudioState(){
+    const els = Array.from(audioBox.querySelectorAll('audio')).filter(a => a.srcObject);
+    if(!els.length){ setUnlock(false); return; }
+    setUnlock(els.some(a => a.paused));
+  }
+  function playAll(){
+    audioBox.querySelectorAll('audio').forEach(a => {
+      if(!a.srcObject) return;
+      const p = a.play();
+      if(p && p.catch) p.catch(()=>{});
+    });
+  }
+  function unlockAudio(){
+    ensureAudioCtx();
+    playAll();
+    setTimeout(checkAudioState, 350);
+  }
+  // Любой тап/клик — попытка разблокировать
+  ['pointerdown','touchend','click','keydown'].forEach(ev =>
+    document.addEventListener(ev, unlockAudio, {passive:true})
+  );
+  unlockBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    unlockAudio();
+    if(!unlockBtn.style.display || unlockBtn.style.display === 'none') return;
+    setTimeout(() => { if(unlockBtn.style.display !== 'none') toast('Нажмите ещё раз или проверьте громкость','error'); }, 500);
+  });
+
+  /* ============ WAKE LOCK (не гасим экран на телефоне) ============ */
+  let wakeLock = null;
+  async function requestWakeLock(){
+    try{
+      if('wakeLock' in navigator && document.visibilityState === 'visible'){
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => { wakeLock = null; });
+      }
+    }catch(e){}
+  }
+  function releaseWakeLock(){
+    try{ if(wakeLock) wakeLock.release(); }catch(e){}
+    wakeLock = null;
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'visible'){
+      if(S.peer) requestWakeLock();
+      setTimeout(unlockAudio, 200);
+    }
+  });
 
   /* ============ HISTORY ============ */
   const Hist = {
@@ -401,6 +567,12 @@ details.settings > div{margin-top:10px}
 
   /* ============ DEVICES ============ */
   async function loadDevices(){
+    if(!hasMedia){
+      micEl.innerHTML = '<option value="">Нет доступа</option>';
+      spkEl.innerHTML = '<option value="default">Системный</option>';
+      spkEl.disabled = true;
+      return;
+    }
     try{
       const t = await navigator.mediaDevices.getUserMedia({audio:true});
       t.getTracks().forEach(x=>x.stop());
@@ -410,11 +582,13 @@ details.settings > div{margin-top:10px}
       micEl.innerHTML = mics.length
         ? mics.map((d,i)=>`<option value="${d.deviceId}">${esc(d.label||'Микрофон '+(i+1))}</option>`).join('')
         : '<option value="">Микрофон не найден</option>';
-      if(!spks.length || typeof HTMLMediaElement.prototype.setSinkId==='undefined'){
+      const canSink = typeof HTMLMediaElement.prototype.setSinkId !== 'undefined';
+      if(!spks.length || !canSink){
         spkEl.innerHTML = '<option value="default">Системный</option>';
         spkEl.disabled = true;
       }else{
         spkEl.innerHTML = spks.map((d,i)=>`<option value="${d.deviceId}">${esc(d.label||'Динамик '+(i+1))}</option>`).join('');
+        spkEl.disabled = false;
       }
     }catch(e){
       micEl.innerHTML = '<option value="">Нет доступа</option>';
@@ -426,15 +600,18 @@ details.settings > div{margin-top:10px}
 
   async function getStream(){
     const id = micEl.value;
-    return navigator.mediaDevices.getUserMedia({
-      audio: id ? {deviceId:{exact:id},echoCancellation:true,noiseSuppression:true,autoGainControl:true}
-                : {echoCancellation:true,noiseSuppression:true,autoGainControl:true},
+    const constraints = {
+      audio: Object.assign(
+        id ? {deviceId:{exact:id}} : {},
+        {echoCancellation:true, noiseSuppression:true, autoGainControl:true}
+      ),
       video:false
-    });
+    };
+    return navigator.mediaDevices.getUserMedia(constraints);
   }
   async function applySpeaker(){
     const id = spkEl.value;
-    if(!id || typeof HTMLMediaElement.prototype.setSinkId==='undefined') return;
+    if(!id || typeof HTMLMediaElement.prototype.setSinkId === 'undefined') return;
     for(const a of audioBox.querySelectorAll('audio')){
       try{ await a.setSinkId(id); }catch(e){}
     }
@@ -474,7 +651,7 @@ details.settings > div{margin-top:10px}
         const res = await createPeer(peerIdFor(roomId));
         peer = res.peer; myId = res.id; isHost = true;
       }catch(err){
-        if(err.type!=='unavailable-id') throw err;
+        if(err.type !== 'unavailable-id') throw err;
       }
     }
 
@@ -500,11 +677,13 @@ details.settings > div{margin-top:10px}
     document.title = 'Комната ' + roomId + ' — Audio Rooms';
     render();
     setStatus(isHost ? 'Комната создана' : 'Подключение...', isHost);
+
+    requestWakeLock();
+    unlockAudio();
   }
 
   function setupHost(){
     S.peer.on('connection', conn => {
-      // Лимит
       if(S.conns.size >= MAX-1){
         try{ conn.send({type:'full'}); }catch(e){}
         setTimeout(()=>{ try{conn.close()}catch(e){} }, 300);
@@ -553,18 +732,15 @@ details.settings > div{margin-top:10px}
           setStatus('В сети', true);
         }
         if(data.type==='update'){
-          // Полная синхронизация
           const incoming = new Map();
           data.peers.forEach(p => {
             if(p.id===S.myId) return;
             incoming.set(p.id, {name:p.name, isHost:p.isHost});
           });
-          // Удалить отсутствующих
           for(const id of Array.from(S.peers.keys())){
             if(id===S.myId) continue;
             if(!incoming.has(id)) removePeer(id, false);
           }
-          // Добавить/обновить
           incoming.forEach((info, id) => {
             if(!S.peers.has(id)){
               S.peers.set(id, info);
@@ -617,7 +793,6 @@ details.settings > div{margin-top:10px}
   function addPeer(id, name, isHost){
     if(id===S.myId) return;
     if(S.peers.has(id)){
-      // Обновляем имя, если изменилось
       S.peers.get(id).name = name || S.peers.get(id).name;
       S.peers.get(id).isHost = isHost;
       return;
@@ -660,16 +835,18 @@ details.settings > div{margin-top:10px}
       let a = document.getElementById('a-'+call.peer);
       if(!a){
         a = document.createElement('audio');
-        a.id = 'a-'+call.peer; a.autoplay=true; a.playsInline=true;
+        a.id = 'a-'+call.peer;
+        a.autoplay = true;
+        a.setAttribute('playsinline','');
+        a.setAttribute('webkit-playsinline','');
+        a.setAttribute('playsinline','true');
+        a.style.display = 'none';
         audioBox.appendChild(a);
       }
       a.srcObject = stream;
       const sid = spkEl.value;
-      if(sid && typeof a.setSinkId==='function') a.setSinkId(sid).catch(()=>{});
-      a.play().catch(()=>{
-        const r = () => { a.play().catch(()=>{}); document.removeEventListener('click', r); };
-        document.addEventListener('click', r, {once:true});
-      });
+      if(sid && typeof a.setSinkId === 'function') a.setSinkId(sid).catch(()=>{});
+      a.play().then(()=>{ setUnlock(false); }).catch(()=>{ setUnlock(true); });
       render();
     });
     call.on('close', () => {
@@ -738,6 +915,10 @@ details.settings > div{margin-top:10px}
     await doEnter(rid, false, n);
   }
   async function doEnter(rid, tryHost, name){
+    if(!hasMedia){
+      errEl.textContent = 'Микрофон недоступен. Нужен HTTPS.';
+      return;
+    }
     createBtn.disabled = true; joinBtn.disabled = true;
     const btn = tryHost ? createBtn : joinBtn;
     const orig = btn.innerHTML;
@@ -772,36 +953,35 @@ details.settings > div{margin-top:10px}
     renderHistory();
   }
   function cleanup(){
+    releaseWakeLock();
     if(S.localStream){ S.localStream.getTracks().forEach(t=>t.stop()); S.localStream=null; }
     S.calls.forEach(c=>{ try{c.close()}catch(e){} }); S.calls.clear();
     S.conns.forEach(c=>{ try{c.close()}catch(e){} }); S.conns.clear();
     if(S.peer){ try{S.peer.destroy()}catch(e){} S.peer=null; }
     S.peers.clear();
     audioBox.innerHTML = '';
+    setUnlock(false);
     S.myId=null; S.roomId=''; S.isHost=false; S.hostId=null;
   }
 
   /* ============ COPY ============ */
-  roomIdShow.addEventListener('click', () => {
+  roomIdShow.addEventListener('click', async () => {
     const id = roomIdTxt.textContent;
     if(!id || id==='—') return;
-    navigator.clipboard.writeText(id).then(()=>toast('ID скопирован','success')).catch(()=>{});
+    (await copyText(id)) ? toast('ID скопирован','success') : toast('Не удалось скопировать','error');
   });
-  copyLinkBtn.addEventListener('click', () => {
+  copyLinkBtn.addEventListener('click', async () => {
     const link = inviteLink.value;
     if(!link) return;
-    navigator.clipboard.writeText(link).then(()=>toast('Ссылка скопирована','success')).catch(()=>{
-      inviteLink.select(); document.execCommand('copy');
-      toast('Ссылка скопирована','success');
-    });
+    (await copyText(link)) ? toast('Ссылка скопирована','success') : toast('Не удалось скопировать','error');
   });
 
   /* ============ INIT ============ */
   createBtn.addEventListener('click', startCreate);
   joinBtn.addEventListener('click', startJoin);
   leaveBtn.addEventListener('click', ()=>leave(false));
-  nameEl.addEventListener('keydown', e=>{ if(e.key==='Enter') roomIdEl.focus(); });
-  roomIdEl.addEventListener('keydown', e=>{ if(e.key==='Enter') startJoin(); });
+  nameEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); roomIdEl.focus(); } });
+  roomIdEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); startJoin(); } });
 
   const savedName = localStorage.getItem(NAME_KEY);
   if(savedName) nameEl.value = savedName;
@@ -811,6 +991,8 @@ details.settings > div{margin-top:10px}
   const urlR = new URLSearchParams(location.search).get('room');
   if(urlR) roomIdEl.value = urlR.toLowerCase();
 
+  // Мобильные браузеры не всегда вызывают beforeunload — используем pagehide
+  window.addEventListener('pagehide', () => { if(S.peer) cleanup(); });
   window.addEventListener('beforeunload', () => { if(S.peer) cleanup(); });
   document.addEventListener('keydown', e => {
     if(e.key==='Escape' && !room.classList.contains('hidden')) leave(false);
@@ -819,7 +1001,6 @@ details.settings > div{margin-top:10px}
   renderHistory();
   loadDevices();
 
-  // Автовход по ссылке, если имя уже сохранено
   if(urlR && savedName){
     setTimeout(()=>{ startJoin(); }, 400);
   }else if(urlR){
