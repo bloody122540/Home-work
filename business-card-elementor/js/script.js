@@ -1,6 +1,4 @@
-/* ==========================================================
-   SCRIPT.JS — финальная версия
-   ========================================================== */
+
 document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
@@ -224,10 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    /* ==========================================================
-       ПОРТФОЛИО — MARQUEE
-       Авто-прокрутка + драг мышью/пальцем + колесо мыши
-       ========================================================== */
+    /* ===========ПОРТФОЛИО=============== */
     function initMarquee() {
         try {
             var wrapper = document.querySelector(".marquee-wrapper");
@@ -242,7 +237,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             var originalWidth = content.getBoundingClientRect().width;
             if (originalWidth < 10) {
-                // картинки могли ещё не загрузиться — попробуем позже
                 window.setTimeout(initMarquee, 300);
                 return;
             }
@@ -257,9 +251,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             /* ---- Переменные движения ---- */
             var offset = 0;
-            var AUTO_SPEED = 0.6; // скорость авто-прокрутки
-            var WHEEL_FACTOR = 0.4; // чувствительность колеса
-            var FRICTION = 0.94; // затухание инерции
+            var AUTO_SPEED = 0.6; 
+            var WHEEL_FACTOR = 0.4;
+            var FRICTION = 0.94; 
             var wheelVelocity = 0;
             var MAX_WHEEL = 25;
 
@@ -337,13 +331,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 dragging = false;
             });
 
-            /* ---- Колесо мыши ----
-               Обычное колесо / свайп вверх-вниз → двигает ленту.
-               Shift + колесо → обычная прокрутка страницы.  */
+            /* ---- Колесо мыши ---- */
             wrapper.addEventListener(
                 "wheel",
                 function (e) {
-                    if (e.shiftKey) return; // Shift → отдаём событие странице
+                    if (e.shiftKey) return; 
                     var delta =
                         Math.abs(e.deltaX) > Math.abs(e.deltaY)
                             ? e.deltaX
