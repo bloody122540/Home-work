@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Власов Антон Юрьевич | Web-developer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/loader.css">
+    <link rel="stylesheet" href="css/intro.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/sections.css">
+    <link rel="stylesheet" href="css/portfolio.css">
+    <link rel="stylesheet" href="css/pricing.css">
+    <link rel="stylesheet" href="css/contacts.css">
+    <link rel="stylesheet" href="css/floating.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- ================= ИНТРО-ВИЗИТКА ================= -->
+    <div id="intro-overlay" class="overlay">
+        <div id="business-card" class="card">
+            <div class="card-photo">
+                <img src="assets/photo.jpg" alt="Власов Антон">
+            </div>
+            <div class="card-info">
+                <h1>Власов Антон Юрьевич</h1>
+                <h2>Web-developer</h2>
+                <p class="services">
+                    Разработка и обслуживание сайтов.<br>
+                    Настройка платежных систем. Установка Telegram-ботов.
+                </p>
+                <button id="enter-btn" class="btn" type="button">Узнать больше</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МИНИ-ВИЗИТКА ================= -->
+    <div id="mini-card-modal" class="modal-overlay hidden">
+        <div class="mini-card">
+            <button class="close-modal" type="button" aria-label="Закрыть">&times;</button>
+            <div class="mini-card-photo">
+                <img src="assets/photo.jpg" alt="Власов Антон">
+            </div>
+            <div class="mini-card-info">
+                <h3>Власов Антон Юрьевич</h3>
+                <h4>Web-developer</h4>
+                <p class="services">
+                    Разработка и обслуживание сайтов.<br>
+                    Настройка платежных систем. Установка Telegram-ботов.
+                </p>
+                <a href="https://t.me/EasyStylee" target="_blank" rel="noopener" class="btn-mini">
+                    Написать в Telegram
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ПЛАВАЮЩАЯ КНОПКА TELEGRAM ================= -->
+    <a href="https://t.me/EasyStylee" target="_blank" rel="noopener" class="floating-tg" title="Написать">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path
+                d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 4.084-1.36 5.722-.168.68-.442.908-.702.93-.55.047-1.032-.342-1.602-.67-.894-.522-1.4-.847-2.27-1.356-.98-.6-.343-.93.22-1.47.15-.14 2.73-2.51 2.78-2.72.006-.026.012-.124-.05-.173-.063-.05-.156-.033-.223-.02-.096.02-1.622 1.03-4.578 3.03-.433.295-.824.44-1.174.43-.386-.01-1.13-.22-1.68-.398-.676-.22-1.215-.34-1.17-.73.023-.2.3-.41.825-.62 3.22-1.4 5.37-2.33 6.45-2.78 3.06-1.27 3.69-1.49 4.1-1.5.09 0 .29.02.42.13.11.09.14.21.15.3-.01.08-.01.16-.03.25z" />
+        </svg>
+    </a>
+
+    <!-- ================= ОСНОВНОЙ САЙТ ================= -->
+    <div id="main-site" class="site-container hidden">
+        <header class="header">
+            <div class="logo" id="logo-trigger">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                    <line x1="7" y1="15" x2="12" y2="15"></line>
+                </svg>
+                <span>А.В.</span>
+            </div>
+            <nav class="nav">
+                <a href="#about" data-text="Обо мне"><span>Обо мне</span></a>
+                <a href="#portfolio" data-text="Портфолио"><span>Портфолио</span></a>
+                <a href="#pricing" data-text="Прейскурант"><span>Прейскурант</span></a>
+                <a href="#contacts" data-text="Контакты"><span>Контакты</span></a>
+            </nav>
+        </header>
+
+        <main>
+            <section id="about" class="section">
+                <div class="container">
+                    <h2 class="section-title"><span class="reveal-text">Обо мне</span></h2>
+                    <div class="about-content">
+                        <div class="about-text">
+                            <p>Меня зовут Власов Антон Юрьевич, мне 31 год. За годы работы я впитал в себя лучшие
+                                качества двух ключевых сфер: технической точности веб-разработчика и пробивной силы
+                                менеджера по продажам. Я обладаю высокой лояльностью к делу и клиентам, всегда уверен в
+                                результате и готов идти до конца ради достижения поставленной цели.</p>
+                            <p>Приветствую! Меня зовут Антон. Я профессиональный веб-разработчик с опытом создания
+                                сайтов любой сложности. Специализируюсь на верстке, интеграции с CMS, настройке
+                                платежных шлюзов и автоматизации бизнеса через Telegram-ботов.</p>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-number" data-target="40">0</div>
+                                <div class="stat-label">Проектов</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" data-target="2">0</div>
+                                <div class="stat-label">Года опыта</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" data-target="98">0</div>
+                                <div class="stat-label">% довольных</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" data-target="24">0</div>
+                                <div class="stat-label">ч поддержка</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="portfolio" class="section bg-alt">
+                <div class="container">
+                    <h2 class="section-title light"><span class="reveal-text">Мое портфолио</span></h2>
+                </div>
+                <div class="marquee-wrapper">
+                    <div class="marquee-content">
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="assets/port1.png" alt="Проект">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="assets/port2.png" alt="Проект">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="assets/port3.png" alt="Проект">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="assets/part4.png" alt="Проект">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="https://via.placeholder.com/400x250/35342b/ffffff?text=WooCommerce"
+                                alt="WooCommerce">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="https://via.placeholder.com/400x250/754043/ffffff?text=1C-Bitrix" alt="Битрикс">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="https://via.placeholder.com/400x250/37423d/ffffff?text=Elementor" alt="Elementor">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener" class="portfolio-item">
+                            <img src="https://via.placeholder.com/400x250/9a8f7f/ffffff?text=Telegram+Bot"
+                                alt="Telegram Bot">
+                            <div class="portfolio-overlay">
+                                <span>Смотреть</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                                    <polyline points="7 7 17 7 17 17"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pricing" class="section">
+                <div class="container">
+                    <h2 class="section-title"><span class="reveal-text">Прейскурант</span></h2>
+                    <div class="pricing-grid">
+                        <div class="price-card">
+                            <div class="price-card-index">01</div>
+                            <h3>Верстка (HTML/CSS/JS)</h3>
+                            <p class="price">от 25 000 ₽</p>
+                            <p>Адаптивная, кроссбраузерная верстка любой сложности.</p>
+                        </div>
+                        <div class="price-card">
+                            <div class="price-card-index">02</div>
+                            <h3>WordPress + Elementor</h3>
+                            <p class="price">от 35 000 ₽</p>
+                            <p>Создание сайтов под ключ на популярных CMS.</p>
+                        </div>
+                        <div class="price-card">
+                            <div class="price-card-index">03</div>
+                            <h3>WooCommerce / Битрикс</h3>
+                            <p class="price">от 60 000 ₽</p>
+                            <p>Разработка интернет-магазинов, интеграция с 1С.</p>
+                        </div>
+                        <div class="price-card">
+                            <div class="price-card-index">04</div>
+                            <h3>Платежные системы</h3>
+                            <p class="price">от 15 000 ₽</p>
+                            <p>Подключение ЮKassa, Stripe, эквайринга и др.</p>
+                        </div>
+                        <div class="price-card">
+                            <div class="price-card-index">05</div>
+                            <h3>Telegram-боты</h3>
+                            <p class="price">от 20 000 ₽</p>
+                            <p>Разработка ботов для продаж, поддержки и уведомлений.</p>
+                        </div>
+                        <div class="price-card">
+                            <div class="price-card-index">06</div>
+                            <h3>React / SPA приложения</h3>
+                            <p class="price">от 80 000 ₽</p>
+                            <p>Создание быстрых одностраничных приложений.</p>
+                        </div>
+                        <div class="price-card">
+                            <div class="price-card-index">07</div>
+                            <h3>Интеграция с CRM</h3>
+                            <p class="price">от 30 000 ₽</p>
+                            <p>Настройка обмена данными с amoCRM, Bitrix24.</p>
+                        </div>
+                        <div class="price-card">
+                            <div class="price-card-index">08</div>
+                            <h3>Обслуживание сайтов</h3>
+                            <p class="price">от 10 000 ₽/мес</p>
+                            <p>Техподдержка, обновления, бэкапы, безопасность.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contacts" class="section bg-dark">
+                <div class="container">
+                    <h2 class="section-title light">
+                        <a href="https://t.me/EasyStylee" target="_blank" rel="noopener" class="contact-heading-link">
+                            <span class="reveal-text">Готов обсудить ваш проект!</span>
+                        </a>
+                    </h2>
+                    <div class="contact-links">
+                        <a href="https://vk.com/" target="_blank" rel="noopener" class="contact-icon" title="ВКонтакте">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M13.162 18.994c.609 0 .858-.406.851-.915-.031-1.917.714-2.949 2.059-1.604 1.488 1.488 1.796 2.519 3.603 2.519h3.2c.808 0 1.126-.26 1.126-.668 0-.863-1.421-2.386-2.625-3.504-1.686-1.565-1.765-1.602-.313-3.486 1.801-2.339 4.157-5.336 2.073-5.336h-3.981c-.772 0-.828.435-1.103 1.083-.995 2.347-2.886 5.387-3.604 4.922-.751-.485-.407-2.406-.35-5.261.015-.754.011-1.271-1.141-1.539-.629-.145-1.241-.205-1.809-.205-2.273 0-3.841.953-2.95 1.119 1.571.293 1.42 3.692 1.054 5.16-.638 2.556-3.036-2.024-4.035-4.305-.241-.548-.315-.974-1.175-.974H.807c-.492 0-.787.16-.787.516 0 .602 2.96 6.72 5.786 9.77 2.756 2.975 5.48 2.708 7.356 2.708z" />
+                            </svg>
+                        </a>
+                        <a href="https://t.me/EasyStylee" target="_blank" rel="noopener" class="contact-icon"
+                            title="Telegram">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18.717-.962 4.084-1.36 5.722-.168.68-.442.908-.702.93-.55.047-1.032-.342-1.602-.67-.894-.522-1.4-.847-2.27-1.356-.98-.6-.343-.93.22-1.47.15-.14 2.73-2.51 2.78-2.72.006-.026.012-.124-.05-.173-.063-.05-.156-.033-.223-.02-.096.02-1.622 1.03-4.578 3.03-.433.295-.824.44-1.174.43-.386-.01-1.13-.22-1.68-.398-.676-.22-1.215-.34-1.17-.73.023-.2.3-.41.825-.62 3.22-1.4 5.37-2.33 6.45-2.78 3.06-1.27 3.69-1.49 4.1-1.5.09 0 .29.02.42.13.11.09.14.21.15.3-.01.08-.01.16-.03.25z" />
+                            </svg>
+                        </a>
+                        <a href="https://instagram.com/" target="_blank" rel="noopener" class="contact-icon"
+                            title="Instagram">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                            </svg>
+                        </a>
+                        <a href="mailto:email@example.com" class="contact-icon" title="Email">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Власов Антон. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>

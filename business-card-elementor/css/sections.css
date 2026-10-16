@@ -1,0 +1,129 @@
+.section {
+    padding: 120px 20px;
+    position: relative;
+}
+
+.bg-alt {
+    background-color: var(--taupe);
+    color: var(--white);
+}
+
+.bg-dark {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+.container {
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    margin-bottom: 60px;
+    position: relative;
+    display: block;
+    text-align: left;
+    padding-bottom: 18px;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 2px;
+    background: var(--burgundy);
+    transition: width 0.6s var(--ease-smooth);
+}
+
+.section-title:hover::after {
+    width: 90px;
+}
+
+.section-title.light {
+    color: var(--white);
+}
+
+.reveal-text {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--black) 0%, var(--black) 50%, var(--burgundy) 50%, var(--burgundy) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-position: 0% 50%;
+    transition: background-position 0.9s var(--ease-smooth);
+}
+
+.section-title.light .reveal-text {
+    background: linear-gradient(90deg, var(--white) 0%, var(--white) 50%, var(--burgundy) 50%, var(--burgundy) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-position: 0% 50%;
+}
+
+.reveal-text.visible {
+    background-position: -100% 50%;
+}
+
+/* ====== ОБО МНЕ ====== */
+.about-text p {
+    font-size: 16px;
+    line-height: 1.9;
+    margin-bottom: 20px;
+    max-width: 900px;
+}
+
+/* ====== СТАТИСТИКА ====== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 70px;
+    border-top: 1px solid rgba(154, 143, 127, 0.3);
+    border-bottom: 1px solid rgba(154, 143, 127, 0.3);
+}
+
+.stat-item {
+    text-align: left;
+    padding: 40px 25px;
+    position: relative;
+    transition: background-color 0.4s ease;
+}
+
+.stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background-color: rgba(154, 143, 127, 0.25);
+}
+
+.stat-item:hover {
+    background-color: rgba(154, 143, 127, 0.05);
+}
+
+.stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--burgundy);
+    line-height: 1;
+    display: inline-block;
+}
+
+.stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--slate-green);
+    margin-top: 12px;
+}

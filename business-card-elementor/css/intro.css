@@ -1,0 +1,333 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(23, 22, 20, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.8s var(--ease-smooth);
+    overflow: hidden;
+}
+
+.card {
+    width: 600px;
+    height: 300px;
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    overflow: visible;
+    transition: transform 0.15s ease-out, box-shadow 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 2;
+    animation: cardPopIn 0.9s var(--ease-bounce) 0.2s backwards;
+}
+
+@keyframes cardPopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--burgundy);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 12px 12px 0 0;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card-photo {
+    width: 40%;
+    background: var(--taupe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px 0 0 12px;
+}
+
+.card-photo::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 80%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.9s ease;
+}
+
+.card:hover .card-photo::after {
+    left: 150%;
+}
+
+.card-photo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--white);
+    transition: transform 0.5s var(--ease-bounce);
+}
+
+.card:hover .card-photo img {
+    transform: scale(1.05);
+}
+
+.card-info {
+    width: 60%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--white);
+    border-radius: 0 12px 12px 0;
+}
+
+.card-info h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 5px;
+    line-height: 1.2;
+    animation: textSlideIn 0.8s var(--ease-smooth) 0.6s backwards;
+}
+
+.card-info h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--burgundy);
+    margin-bottom: 15px;
+    animation: textSlideIn 0.8s var(--ease-smooth) 0.7s backwards;
+}
+
+.card-info .services {
+    font-size: 12px;
+    color: var(--slate-green);
+    margin-bottom: 20px;
+    animation: textSlideIn 0.8s var(--ease-smooth) 0.8s backwards;
+}
+
+.card-info .btn {
+    animation: textSlideIn 0.8s var(--ease-smooth) 0.9s backwards;
+}
+
+@keyframes textSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.btn {
+    background-color: var(--burgundy);
+    color: var(--white);
+    border: none;
+    padding: 12px 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.4s var(--ease-smooth);
+    align-self: flex-start;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn:hover {
+    background-color: var(--dark-olive);
+    transform: translateY(-2px);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+/* ====== МИНИ-ВИЗИТКА ====== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(23, 22, 20, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.4s ease backwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.mini-card {
+    width: 600px;
+    height: 300px;
+    background-color: var(--white);
+    border-radius: 12px;
+    display: flex;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease-out;
+    cursor: pointer;
+    overflow: visible;
+    transform-style: preserve-3d;
+    will-change: transform;
+    animation: miniCardPopIn 0.6s var(--ease-bounce) backwards;
+}
+
+@keyframes miniCardPopIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--black);
+    cursor: pointer;
+    transition: all 0.4s var(--ease-bounce);
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+}
+
+.close-modal:hover {
+    color: var(--white);
+    background-color: var(--burgundy);
+    transform: rotate(90deg);
+}
+
+.mini-card-photo {
+    width: 40%;
+    background: var(--taupe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 12px 0 0 12px;
+}
+
+.mini-card-photo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--white);
+}
+
+.mini-card-info {
+    width: 60%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--white);
+    border-radius: 0 12px 12px 0;
+}
+
+.mini-card-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.mini-card-info h4 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--burgundy);
+    margin-bottom: 15px;
+}
+
+.mini-card-info .services {
+    font-size: 12px;
+    color: var(--slate-green);
+    margin-bottom: 20px;
+}
+
+.btn-mini {
+    display: inline-block;
+    background-color: var(--burgundy);
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s var(--ease-smooth);
+    align-self: flex-start;
+}
+
+.btn-mini:hover {
+    background-color: var(--dark-olive);
+    transform: translateY(-2px);
+}
