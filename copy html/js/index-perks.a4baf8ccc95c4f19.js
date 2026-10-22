@@ -1,0 +1,1 @@
+(()=>{const t=document.getElementById("flagship-perks"),e=document.getElementById("flagship");if(!t||!e)return;const s=matchMedia("(max-width: 1023px)"),n=()=>{const a=s.matches||e.classList.contains("is-open");t.inert=!a,t.setAttribute("aria-hidden",String(!a))};s.addEventListener("change",n),new MutationObserver(n).observe(e,{attributes:!0,attributeFilter:["class"]}),n()})();
